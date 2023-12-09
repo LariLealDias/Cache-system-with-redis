@@ -1,2 +1,7 @@
 fastapi>=0.68.0,<0.69.0
-PyOTP
+SQLAlchemy==2.0.23
+PyMySQL==1.1.0
+aiomysql==0.2.0
+databases==0.8.0
+sqlalchemy==1.4.50
+pymysql
