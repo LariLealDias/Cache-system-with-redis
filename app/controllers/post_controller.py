@@ -28,4 +28,24 @@ async def create_post(post_data: PostBase):
         print(e)
         raise HTTPException(status_code=500, detail="Algo deu errado")
 
+@router.get("/{post_id}")
+async def get_one_post(post_id: int):
+    try:
+        get_cached_post = redis_client.get(f"post_id: {post_id}")
 
+        if get_cached_post:
+            deserialized_cached_post = json.loads(get_cached_post)
+            return deserialized_cached_post
+        
+        query = post.select().where(post.c.id == post_id)
+        post_data = await database.fetch_one(query)
+
+        if post_data:
+            redis_client.set(f"post_id: {post_id}", json.dumps(post_data.dict()))
+            data = dict(post_data)
+
+            return data
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Algo deu errado")
