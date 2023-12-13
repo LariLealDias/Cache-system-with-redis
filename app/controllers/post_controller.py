@@ -52,4 +52,25 @@ async def get_one_post(post_id: int):
         print(e)
         raise HTTPException(status_code=500, detail="Algo deu errado")
 
-  
+@router.patch('/{post_id}')
+async def update_post_by_id(post_id: int, update_data: PostBaseToUpdate):
+    try:
+        query = post.update().where(post.c.id == post_id).values(title=update_data.title, text=update_data.text)
+        result = await database.execute(query)
+
+        if result:
+            updated_query = post.select().where(post.c.id == post_id)
+            updated_post = await database.fetch_one(updated_query)
+
+            if updated_post:
+                data = {
+                    "title": updated_post.title,
+                    "text": updated_post.text,
+                }
+                
+                redis_client.set(f"post_id: {post_id}", json.dumps(data))
+                return data
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Algo deu errado")   
