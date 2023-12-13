@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from models.schemas.post_schema import PostBase
+from models.schemas.post_schema import PostBase, PostBaseToUpdate
 from models.model.post_model_db import post
 import os
 from dotenv import load_dotenv
@@ -20,18 +20,18 @@ async def create_post(post_data: PostBase):
         query = post.insert().values(title=post_data.title, text=post_data.text)
         last_record_id = await database.execute(query)
 
-        resultadoRedis = redis_client.set(f"post_id: {last_record_id}", json.dumps(post_data.dict()))
+        resultadoRedis = redis_client.set(f"post_id:{last_record_id}", json.dumps(post_data.dict()))
         print(resultadoRedis)
 
         return {**post_data.dict(), "id": last_record_id}
     except Exception as e:
         print(e)
-        raise HTTPException(status_code=500, detail="Algo deu errado")
+        raise HTTPException(status_code=500, detail=f"{e}Algo deu errado")
 
 @router.get("/{post_id}")
 async def get_one_post(post_id: int):
     try:
-        get_cached_post = redis_client.get(f"post_id: {post_id}")
+        get_cached_post = redis_client.get(f"post_id:{post_id}")
 
         if get_cached_post:
             deserialized_cached_post = json.loads(get_cached_post)
@@ -39,13 +39,17 @@ async def get_one_post(post_id: int):
         
         query = post.select().where(post.c.id == post_id)
         post_data = await database.fetch_one(query)
-
+       
         if post_data:
-            redis_client.set(f"post_id: {post_id}", json.dumps(post_data.dict()))
-            data = dict(post_data)
-
+            data = {
+                "title": post_data.title,
+                "text": post_data.text,
+            }
+            
+            redis_client.set(f"post_id:{post_id}", json.dumps(data))
             return data
-
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Algo deu errado")
+
+  
