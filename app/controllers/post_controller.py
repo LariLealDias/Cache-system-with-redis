@@ -20,7 +20,7 @@ async def create_post(post_data: PostBase):
         query = post.insert().values(title=post_data.title, text=post_data.text)
         last_record_id = await database.execute(query)
 
-        resultadoRedis = redis_client.set(f"post_id:{last_record_id}", json.dumps(post_data.dict()))
+        resultadoRedis = redis_client.setex(f"post_id:{last_record_id}", 21600, json.dumps(post_data.dict()))
         print(resultadoRedis)
 
         return {**post_data.dict(), "id": last_record_id}
@@ -46,7 +46,7 @@ async def get_one_post(post_id: int):
                 "text": post_data.text,
             }
             
-            redis_client.set(f"post_id:{post_id}", json.dumps(data))
+            redis_client.setex(f"post_id:{post_id}", 21600, json.dumps(data))
             return data
     except Exception as e:
         print(e)
@@ -68,9 +68,23 @@ async def update_post_by_id(post_id: int, update_data: PostBaseToUpdate):
                     "text": updated_post.text,
                 }
                 
-                redis_client.set(f"post_id: {post_id}", json.dumps(data))
+                redis_client.setex(f"post_id: {post_id}", 21600, json.dumps(data))
                 return data
 
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Algo deu errado")   
+
+@router.delete("/{post_id}")
+async def delete_post(post_id: int):
+    try:
+        query = post.delete().where(post.c.id == post_id)
+        result = await database.execute(query)
+
+        if result:
+            redis_client.delete(f"post_id:{post_id}")
+            return {"message": "Postagem excluída com sucesso"}
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Algo deu errado")
