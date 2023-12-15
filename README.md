@@ -1,4 +1,4 @@
-# Chace System For a Blog
+# Chace System with Redis
 API com manipulação de dados via Redis e Mysql desenvolvido com FastAPI
 <br><br><br>
 
@@ -22,7 +22,7 @@ API com manipulação de dados via Redis e Mysql desenvolvido com FastAPI
 ## 📝 DESCRIÇÃO
 **O foco deste projeto é a manipulação de dados com redis.**
 
-Manipulções CRUD do objeto Post(postagens) para um blog com armazenamento em banco MYSQL e em Redis. Desenvolvido com o framework FastAPI do Python. 
+Manipulções CRUD do objeto Post(postagens) para um sistema de blog com armazenamento em banco MYSQL e em Redis. Desenvolvido com o framework FastAPI do Python. 
 As manipulações do banco MySQL foram realizadas com o ORM sqlalchemy. O Docker foi utilizado para baixar a imagem oficial do Redis.
 
 
