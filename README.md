@@ -20,7 +20,7 @@ API com manipulação de dados via Redis e Mysql desenvolvido com FastAPI
 
 
 ## 📝 DESCRIÇÃO
-**O foco deste projeto é a manipulação de dados com redis.**
+**O foco deste projeto é a manipulação de dados com Redis.**
 
 Manipulções CRUD do objeto Post(postagens) para um sistema de blog com armazenamento em banco MYSQL e em Redis. Desenvolvido com o framework FastAPI do Python. 
 As manipulações do banco MySQL foram realizadas com o ORM sqlalchemy. O Docker foi utilizado para baixar a imagem oficial do Redis.
@@ -29,10 +29,10 @@ As manipulações do banco MySQL foram realizadas com o ORM sqlalchemy. O Docker
 <br><br>
  ### ℹ️ INFORMAÇÕES
 Este projeto visa a lógica de desenvolvimento com Redis, ou seja: 
-- Método POST: cria um objeto no banco, se sucesso nesta operação, é criando o mesmo objeto no banco Redis.
-- Método GET: a consulta é priorizada no banco Redis, caso não tenha, a busca é diretamento no banco MySQL, caso esta operação tenha sucesso, é setado o objeto encontrado no banco Redis.
-- Método PATCH: esta ação modifica primeiro o objeto no banco MySQL, se sucesso, é setado novamento este objeto no banco Redis
-- Método DELETE: deleta o objeto primeiro no banco MySQL e se sucesso, deleta no banco MySQL
+- Método POST: cria um objeto no banco, se sucesso nesta operação, é criando o mesmo objeto no cache Redis.
+- Método GET: a consulta é priorizada no cache Redis, caso não tenha, a busca é diretamento no banco MySQL, caso esta operação tenha sucesso, é setado o objeto encontrado no Redis.
+- Método PATCH: esta ação modifica primeiro o objeto no banco MySQL, se sucesso, é setado novamento este objeto no cache Redis.
+- Método DELETE: deleta o objeto primeiro no banco MySQL e se sucesso, deleta no cache.
 
 O TTL configurado é de 6h, equivalente a 21600 segundos.
 
